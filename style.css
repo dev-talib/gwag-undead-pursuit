@@ -1,0 +1,38 @@
+/* style.css */
+body {
+  margin: 0;
+  overflow: hidden;
+  font-family: 'Arial', sans-serif;
+  background-color: skyblue;
+}
+
+#gameContainer {
+  position: relative;
+  width: 100vw;
+  height: 100vh;
+  display: flex;
+  align-items: flex-end;
+  justify-content: center;
+  border: 2px solid #8b5f33;
+  box-shadow: inset 0 0 20px rgba(0, 0, 0, 0.5); 
+}
+
+.character {
+  width: 60px;
+  height: 60px;
+  position: absolute;
+  bottom: 0;
+  background: url('character-sprite.png') no-repeat center center;
+  background-size: contain;
+  animation: characterAnimation 1s infinite alternate; 
+}
+
+.bullet {
+  width: 20px;
+  height: 10px;
+  position: absolute;
+  background-color: crimson; 
+  border-radius: 5px;
+  box-shadow: 0 0 5px rgba(0, 0, 0, 0.6);
+}
+
