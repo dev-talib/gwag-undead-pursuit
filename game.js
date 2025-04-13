@@ -30,8 +30,24 @@ document.addEventListener('DOMContentLoaded', () => {
 
   // Zombies
   let zombieCount = 0;
-  let maxZombies = 3;
-  const spawnInterval = 5000; // 10 seconds
+  let maxZombies = 15;
+  const spawnInterval = 2000; // 10 seconds
+
+  // sound
+  const gunshotAudio = new Audio('assets/sound/gunshot.mp3');
+  gunshotAudio.volume = 0.2; // optional volume control
+
+
+  // Background Music
+  const bgMusic = new Audio('assets/sound/background-music_01.mp3');
+  bgMusic.loop = true;       
+  bgMusic.volume = 0.5;      // Set volume (0 to 1)
+  bgMusic.play().catch(() => {
+    // Autoplay might be blocked — can be triggered on user interaction
+    document.addEventListener('keydown', () => {
+      bgMusic.play();
+    }, { once: true });
+  });
 
   // --- PLAYER ACTIONS ---
 
@@ -90,6 +106,8 @@ document.addEventListener('DOMContentLoaded', () => {
     bullet.style.height = '5px';
     bullet.style.width = '5px';
 
+    playGunshotSound();
+
     const direction = pastMovement === 'left' ? -1 : 1;
     const bulletPos = {
       x: character1Pos.x + (direction === 1 ? 60 : -20),
@@ -129,7 +147,7 @@ document.addEventListener('DOMContentLoaded', () => {
     movingRight = false;
     character1.style.height = '80px';
     character1.style.width = '120px';
-    shootInterval = setInterval(shoot, 500);
+    shootInterval = setInterval(shoot, 400);
   }
 
   function stopShooting() {
@@ -137,6 +155,12 @@ document.addEventListener('DOMContentLoaded', () => {
       clearInterval(shootInterval);
       isShooting = false;
     }
+  }
+
+  function playGunshotSound() {
+    // Rewind to start if already playing
+    gunshotAudio.currentTime = 0;
+    gunshotAudio.play();
   }
 
   // --- ZOMBIE SYSTEM ---
@@ -168,7 +192,7 @@ document.addEventListener('DOMContentLoaded', () => {
       el: zombie,
       fromLeft,
       pos: { x: startX, y: startY },
-      speed: 0.5,
+      speed: 0.9,
       hits: 0,
       hitThreshold: Math.floor(Math.random() * 3) + 2, // 2-4 hits
       dead: false
