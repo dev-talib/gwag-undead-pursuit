@@ -32,6 +32,8 @@ document.addEventListener('DOMContentLoaded', () => {
   let zombieCount = 0;
   let maxZombies = 15;
   const spawnInterval = 2000; // 10 seconds
+  let hasTriggeredRightSideZombies = false;
+
 
   // sound
   const gunshotAudio = new Audio('assets/sound/gunshot.mp3');
@@ -192,7 +194,7 @@ document.addEventListener('DOMContentLoaded', () => {
       el: zombie,
       fromLeft,
       pos: { x: startX, y: startY },
-      speed: 0.9,
+      speed: 0.8,
       hits: 0,
       hitThreshold: Math.floor(Math.random() * 3) + 2, // 2-4 hits
       dead: false
@@ -248,6 +250,10 @@ document.addEventListener('DOMContentLoaded', () => {
     movingRight = false;
     stopShooting();
 
+
+    bgMusic.pause();
+    bgMusic.currentTime = 0; // Optional: reset to start
+
     character1.src = "assets/splash.gif";
     character1.style.height = '120px';
     character1.style.width = '120px';
@@ -268,13 +274,141 @@ document.addEventListener('DOMContentLoaded', () => {
     clearInterval(spawnLoop);
   }
 
+  function spawnZombieWaveFromRight(count = 5) {
+    for (let i = 0; i < count; i++) {
+      const delay = i * 500; // 0.5s staggered spawn
+      setTimeout(() => {
+        const zombie = document.createElement("img");
+        zombie.style.position = 'absolute';
+        zombie.style.height = '60px';
+        zombie.style.width = '60px';
+        zombie.classList.add("character");
+        zombie.src = "assets/zombie-run-left.gif"; // from right
+  
+        const startX = window.innerWidth + Math.floor(Math.random() * 100);
+        const startY = 0;
+  
+        zombie.style.left = `${startX}px`;
+        zombie.style.bottom = `${startY}px`;
+  
+        gameContainer.appendChild(zombie);
+  
+        const newZombie = {
+          el: zombie,
+          fromLeft: false,
+          pos: { x: startX, y: startY },
+          speed: 0.8,
+          hits: 0,
+          hitThreshold: Math.floor(Math.random() * 2) + 2, // 2–3 hits
+          dead: false
+        };
+  
+        zombies.push(newZombie);
+        zombieCount++;
+      }, delay);
+    }
+  }
+  
+
+  function gameWin() {
+    if (isGameOver) return; // prevent conflict with gameOver
+    isGameOver = true;
+  
+    stopShooting();
+    movingLeft = false;
+    movingRight = false;
+  
+    bgMusic.pause();
+  
+    character1.src = "assets/player-run-right.gif";
+    character1.style.height = '80px';
+    character1.style.width = '80px';
+  
+    const winText = document.createElement('div');
+    winText.textContent = 'YOU ESCAPED!';
+    winText.style.position = 'absolute';
+    winText.style.left = `${character1Pos.x}px`;
+    winText.style.bottom = `${character1Pos.y + 80}px`;
+    winText.style.fontSize = '24px';
+    winText.style.fontWeight = 'bold';
+    winText.style.color = 'lime';
+    winText.style.textAlign = 'center';
+    winText.style.zIndex = '15';
+    winText.style.textShadow = '2px 2px black';
+    gameContainer.appendChild(winText);
+  
+    clearInterval(gameLoop);
+    clearInterval(spawnLoop);
+  }
+
+  function checkWinCondition() {
+    const busX = window.innerWidth - 300 - 20; // right: 20px; bus width: 300px
+  
+    // Trigger extra zombies when player gets close to bus
+    if (!hasTriggeredRightSideZombies && character1Pos.x >= busX - 300) {
+      hasTriggeredRightSideZombies = true;
+      spawnZombieWaveFromRight();
+    }
+  
+    // Win condition
+    if (character1Pos.x >= busX - 60) {
+      gameWin();
+    }
+  }
+  
+  
+  
+
   // --- GAME LOOP ---
+
+  // const gameLoop = setInterval(() => {
+  //   runAway();
+  //   jump();
+  //   moveZombies();
+  // }, 10);
 
   const gameLoop = setInterval(() => {
     runAway();
     jump();
     moveZombies();
+    checkWinCondition();  // <-- new
   }, 10);
+  
 
   const spawnLoop = setInterval(spawnZombie, spawnInterval);
+
+
+  // just for decoration
+
+  function addArmoredBus() {
+    const guitarCharacter = document.createElement("img");
+    guitarCharacter.src = "assets/armored-bus.png";
+    guitarCharacter.alt = "Armored bus";
+    guitarCharacter.style.position = "absolute";
+    guitarCharacter.style.width = "300px";
+    guitarCharacter.style.height = "120px";
+    guitarCharacter.style.right = "20px";
+    guitarCharacter.style.bottom = "0";
+    guitarCharacter.style.zIndex = "10";
+    
+    gameContainer.appendChild(guitarCharacter);
+  }
+
+  function addGuitarCharacter() {
+    const guitarCharacter = document.createElement("img");
+    guitarCharacter.src = "assets/guitar-character.gif";
+    guitarCharacter.alt = "Guitar Character";
+    guitarCharacter.style.position = "absolute";
+    guitarCharacter.style.width = "65px";
+    guitarCharacter.style.height = "65px";
+    guitarCharacter.style.right = "160px";
+    guitarCharacter.style.bottom = "100px";
+    guitarCharacter.style.zIndex = "10";
+    
+    gameContainer.appendChild(guitarCharacter);
+  }
+
+  addArmoredBus();
+  addGuitarCharacter();
+  
 });
