@@ -1,16 +1,116 @@
-<!DOCTYPE html>
+<!DOCTYPE html> 
 <html lang="en">
-<head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Character Game</title>
-  <link rel="stylesheet" href="style.css">
-</head>
-<body>
-  <div id="gameContainer">
-    <!-- Character will be added via JS -->
-  </div>
+  <head> 
+    <meta charset="UTF-8" /> 
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /> 
+    <title>GWAG - Girl With a Gun</title> 
+    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@700&display=swap" rel="stylesheet"> <style> 
+    * { 
+      margin: 0; 
+      padding: 0; 
+      box-sizing: border-box; 
+    } 
+    body {
+        font-family: 'Orbitron', 
+        sans-serif; color: #66ffcc; /* softened neon greenish */ 
+        height: 100vh; 
+        display: flex; 
+        flex-direction: column; 
+        justify-content: center; 
+        align-items: center; 
+        text-align: center; 
+        overflow: hidden; 
+        position: relative; 
+        background-color: #000; 
+    } 
+    .avatar { 
+        width: 180px; 
+        height: 180px; 
+        border-radius: 50%; 
+        overflow: hidden; 
+        border: 4px solid #cc3399; 
+        margin-bottom: 20px; 
+        box-shadow: 0 0 12px #cc3399aa; 
+        z-index: 2; 
+        background-color: whitesmoke; 
+        } 
+        
+    .avatar::before { 
+        content: ''; 
+        position: absolute; 
+        top: 0; left: 0; 
+        width: 100%; 
+        height: 100%; 
+        background: repeating-linear-gradient( to bottom, rgba(0, 0, 0, 0.15), rgba(0, 0, 0, 0.15) 1px, transparent 1px, transparent 4px ); 
+        pointer-events: none; 
+        z-index: 1; 
+    } 
+    .avatar img { 
+        width: 100%; 
+        height: auto; 
+        display: block;   
+        filter: contrast(1.15) saturate(1.2); 
+    } 
+                
+    h1 { 
+        font-size: 3.2rem; 
+        color: #cc3399; 
+        text-shadow: 0 0 6px #cc3399aa; 
+        margin-bottom: 10px; 
+        z-index: 2; 
+    } 
+    .tagline { 
+        font-size: 1.2rem; 
+        padding: 10px 20px; 
+        color: #66ffcc; 
+        background: rgba(0, 0, 0, 0.6); 
+        border: 2px solid #66ffcc; 
+        border-radius: 10px; 
+        box-shadow: 0 0 10px #66ffcc99; 
+        margin-bottom: 30px; z-index: 2; 
+    } 
+                        
+    .cta-button { 
+        padding: 15px 35px; 
+        font-size: 1.1rem; 
+        color: #000; 
+        background-color: #66ffcc; 
+        border: none; 
+        border-radius: 5px; 
+        cursor: pointer; 
+        text-transform: uppercase; 
+        transition: all 0.3s ease; 
+        box-shadow: 0 0 8px #66ffcc88; 
+        z-index: 2; 
+    } 
+                            
+    .cta-button:hover { 
+        background-color: #7fffd4; 
+        transform: scale(1.08); 
+    } 
+                                
+    @keyframes flicker {
+      0%, 19%, 21%, 23%, 25%, 54%, 56%, 100% { opacity: 1; } 20%, 22%, 24%, 55% 
+      { opacity: 0.5; } 
+    } 
+    
+    h1, .tagline { 
+      animation: flicker 3s infinite; 
+    } 
+    </style> 
+  </head> 
+  <body> 
+    <div class="avatar"> 
+        <img src="assets/hero-avatar.png" alt="Hero Avatar"> 
+    </div> 
+    <h1>GWAG</h1> 
+    <div class="tagline">Girl With a Gun: Undead Pursuit</div> 
+    <button class="cta-button">Enter the Fight</button> 
 
-  <script src="game.js"></script>
-</body>
+    <script>
+      document.querySelector('.cta-button').addEventListener('click', () => {
+        window.location.href = 'game.html';
+      });
+    </script>  
+  </body> 
 </html>

@@ -361,12 +361,6 @@ document.addEventListener('DOMContentLoaded', () => {
 
   // --- GAME LOOP ---
 
-  // const gameLoop = setInterval(() => {
-  //   runAway();
-  //   jump();
-  //   moveZombies();
-  // }, 10);
-
   const gameLoop = setInterval(() => {
     runAway();
     jump();

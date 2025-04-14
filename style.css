@@ -6,17 +6,6 @@ body {
   background-color: black;
 }
 
-/* #gameContainer {
-  position: relative;
-  width: 100vw;
-  height: 100vh;
-  display: flex;
-  align-items: flex-end;
-  justify-content: center;
-  border: 2px solid #8b5f33;
-  box-shadow: inset 0 0 20px rgba(0, 0, 0, 0.5); 
-} */
-
 #gameContainer {
   position: relative;
   width: 100vw;
