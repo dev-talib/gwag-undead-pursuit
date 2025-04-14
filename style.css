@@ -3,19 +3,25 @@ body {
   margin: 0;
   overflow: hidden;
   font-family: 'Arial', sans-serif;
-  background-color: skyblue;
+  background-color: black;
 }
 
 #gameContainer {
   position: relative;
   width: 100vw;
-  height: 100vh;
+  height: 80vh;
   display: flex;
   align-items: flex-end;
   justify-content: center;
   border: 2px solid #8b5f33;
   box-shadow: inset 0 0 20px rgba(0, 0, 0, 0.5); 
+
+  background-image: url('assets/background/bg_05.jpeg');  /* replace with your image path */
+  background-size: cover;                 
+  background-position: center;            
+  background-repeat: no-repeat;           
 }
+
 
 .character {
   width: 60px;
