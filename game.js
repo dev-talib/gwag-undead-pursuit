@@ -41,7 +41,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
 
   // Background Music
-  const bgMusic = new Audio('assets/sound/background-music_01.mp3');
+  const bgMusic = new Audio('assets/sound/background-music-01.mp3');
   bgMusic.loop = true;       
   bgMusic.volume = 0.5;      // Set volume (0 to 1)
   bgMusic.play().catch(() => {
@@ -105,7 +105,7 @@ document.addEventListener('DOMContentLoaded', () => {
     const bullet = document.createElement('img');
     bullet.src = "assets/bullet-left.png";
     bullet.style.position = 'absolute';
-    bullet.style.height = '5px';
+    bullet.style.height = '1px';
     bullet.style.width = '5px';
 
     playGunshotSound();
@@ -274,7 +274,7 @@ document.addEventListener('DOMContentLoaded', () => {
     clearInterval(spawnLoop);
   }
 
-  function spawnZombieWaveFromRight(count = 5) {
+  function spawnZombieWaveFromRight(count = 3) {
     for (let i = 0; i < count; i++) {
       const delay = i * 500; // 0.5s staggered spawn
       setTimeout(() => {
@@ -297,9 +297,9 @@ document.addEventListener('DOMContentLoaded', () => {
           el: zombie,
           fromLeft: false,
           pos: { x: startX, y: startY },
-          speed: 0.8,
+          speed: 1,
           hits: 0,
-          hitThreshold: Math.floor(Math.random() * 2) + 2, // 2–3 hits
+          hitThreshold: Math.floor(Math.random() * 2) + 3, // 2–3 hits
           dead: false
         };
   
@@ -321,8 +321,8 @@ document.addEventListener('DOMContentLoaded', () => {
     bgMusic.pause();
   
     character1.src = "assets/player-run-right.gif";
-    character1.style.height = '80px';
-    character1.style.width = '80px';
+    character1.style.height = '60px';
+    character1.style.width = '60px';
   
     const winText = document.createElement('div');
     winText.textContent = 'YOU ESCAPED!';
@@ -342,7 +342,7 @@ document.addEventListener('DOMContentLoaded', () => {
   }
 
   function checkWinCondition() {
-    const busX = window.innerWidth - 300 - 20; // right: 20px; bus width: 300px
+    const busX = window.innerWidth - 120 - 20; // right: 20px; bus width: 300px
   
     // Trigger extra zombies when player gets close to bus
     if (!hasTriggeredRightSideZombies && character1Pos.x >= busX - 300) {
