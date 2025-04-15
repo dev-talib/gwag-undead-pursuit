@@ -49,9 +49,29 @@ document.addEventListener('DOMContentLoaded', () => {
     });
   }
 
-  preloadAssets(assetsToPreload).then(() => {
+  function restartGame() {
+    gameContainer.innerHTML = "";
+    document.getElementById("restartScreen").style.display = "none";
     initGame();
+  }
+
+  document.getElementById("restartBtn").addEventListener("click", () => {
+    restartGame();
   });
+  
+  
+
+  preloadAssets(assetsToPreload).then(() => {
+    // Show the start button once assets are loaded
+    const startScreen = document.getElementById("startScreen");
+    const startBtn = document.getElementById("startBtn");
+  
+    startBtn.addEventListener("click", () => {
+      startScreen.style.display = "none";
+      initGame();
+    });
+  });
+  
 
   function initGame() {
     const character1 = document.createElement("img");
@@ -300,6 +320,9 @@ document.addEventListener('DOMContentLoaded', () => {
 
       clearInterval(gameLoop);
       clearInterval(spawnLoop);
+
+      // Show restart button
+      document.getElementById("restartScreen").style.display = "flex";
     }
 
     function gameWin() {
@@ -331,6 +354,9 @@ document.addEventListener('DOMContentLoaded', () => {
 
       clearInterval(gameLoop);
       clearInterval(spawnLoop);
+
+      // Show restart button
+      document.getElementById("restartScreen").style.display = "flex";
     }
 
     function checkWinCondition() {
