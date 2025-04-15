@@ -103,6 +103,11 @@ document.addEventListener('DOMContentLoaded', () => {
     const spawnInterval = 2000;
     let hasTriggeredRightSideZombies = false;
 
+    const killCountText = document.getElementById('killCountText');
+    killCount = 0;
+    killCountText.textContent = `Kills: ${killCount}`;
+
+
     const gunshotAudio = new Audio('assets/sound/gunshot.mp3');
     gunshotAudio.volume = 0.2;
 
@@ -282,6 +287,11 @@ document.addEventListener('DOMContentLoaded', () => {
       z.el.style.height = '45px';
       z.el.style.width = '45px';
       let opacity = 1;
+
+      killCount++;
+      killCountText.textContent = `Kills: ${killCount}`;
+
+
       const fade = setInterval(() => {
         opacity -= 0.05;
         z.el.style.opacity = opacity;

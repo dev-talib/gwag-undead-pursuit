@@ -87,3 +87,25 @@ body {
   border-radius: 8px;
   cursor: pointer;
 }
+
+
+#killCount {
+  position: absolute;
+  top: 15px;
+  left: 15px;
+  color: white;
+  font-size: 20px;
+  font-weight: bold;
+  z-index: 999;
+  background: rgba(0, 0, 0, 0.6);
+  padding: 8px 12px;
+  border-radius: 6px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+#zombieIcon {
+  width: 24px;
+  height: 24px;
+}
