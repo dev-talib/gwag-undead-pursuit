@@ -87,10 +87,6 @@ document.addEventListener('DOMContentLoaded', () => {
     let isShooting = false;
     let shootInterval = null;
     let isGameOver = false;
-    let isJumping = false;
-    let jumpHeight = 0;
-    let jumpSpeed = 4;
-    const gravity = 0.5;
 
     let movingLeft = false;
     let movingRight = true;
@@ -127,20 +123,6 @@ document.addEventListener('DOMContentLoaded', () => {
       character1.style.left = `${character1Pos.x}px`;
     }
 
-    function jump() {
-      if (isJumping) {
-        character1Pos.y += jumpSpeed;
-        jumpHeight += jumpSpeed;
-        if (jumpHeight > 100) jumpSpeed = -4;
-        if (character1Pos.y <= 0) {
-          character1Pos.y = 0;
-          isJumping = false;
-          jumpSpeed = 4;
-          jumpHeight = 0;
-        }
-        character1.style.bottom = `${character1Pos.y}px`;
-      }
-    }
 
     document.addEventListener('keydown', (event) => {
       if (isGameOver) return;
@@ -160,9 +142,6 @@ document.addEventListener('DOMContentLoaded', () => {
         character1.style.width = '60px';
         pastMovement = 'right';
         character1.src = "assets/player-run-right.gif";
-      } else if (event.key === "ArrowUp" && !isJumping) {
-        stopShooting();
-        isJumping = true;
       } else if (event.code === "Space" && !isShooting) {
         startShooting();
       }
@@ -413,7 +392,6 @@ document.addEventListener('DOMContentLoaded', () => {
 
     const gameLoop = setInterval(() => {
       runAway();
-      jump();
       moveZombies();
       checkWinCondition();
     }, 10);
