@@ -49,9 +49,29 @@ document.addEventListener('DOMContentLoaded', () => {
     });
   }
 
-  preloadAssets(assetsToPreload).then(() => {
+  function restartGame() {
+    gameContainer.innerHTML = "";
+    document.getElementById("restartScreen").style.display = "none";
     initGame();
+  }
+
+  document.getElementById("restartBtn").addEventListener("click", () => {
+    restartGame();
   });
+  
+  
+
+  preloadAssets(assetsToPreload).then(() => {
+    // Show the start button once assets are loaded
+    const startScreen = document.getElementById("startScreen");
+    const startBtn = document.getElementById("startBtn");
+  
+    startBtn.addEventListener("click", () => {
+      startScreen.style.display = "none";
+      initGame();
+    });
+  });
+  
 
   function initGame() {
     const character1 = document.createElement("img");
@@ -82,6 +102,11 @@ document.addEventListener('DOMContentLoaded', () => {
     let maxZombies = 15;
     const spawnInterval = 2000;
     let hasTriggeredRightSideZombies = false;
+
+    const killCountText = document.getElementById('killCountText');
+    killCount = 0;
+    killCountText.textContent = `Kills: ${killCount}`;
+
 
     const gunshotAudio = new Audio('assets/sound/gunshot.mp3');
     gunshotAudio.volume = 0.2;
@@ -262,6 +287,11 @@ document.addEventListener('DOMContentLoaded', () => {
       z.el.style.height = '45px';
       z.el.style.width = '45px';
       let opacity = 1;
+
+      killCount++;
+      killCountText.textContent = `Kills: ${killCount}`;
+
+
       const fade = setInterval(() => {
         opacity -= 0.05;
         z.el.style.opacity = opacity;
@@ -300,6 +330,9 @@ document.addEventListener('DOMContentLoaded', () => {
 
       clearInterval(gameLoop);
       clearInterval(spawnLoop);
+
+      // Show restart button
+      document.getElementById("restartScreen").style.display = "flex";
     }
 
     function gameWin() {
@@ -331,6 +364,9 @@ document.addEventListener('DOMContentLoaded', () => {
 
       clearInterval(gameLoop);
       clearInterval(spawnLoop);
+
+      // Show restart button
+      document.getElementById("restartScreen").style.display = "flex";
     }
 
     function checkWinCondition() {
