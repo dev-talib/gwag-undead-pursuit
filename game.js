@@ -2,26 +2,17 @@ document.addEventListener('DOMContentLoaded', () => {
   const gameContainer = document.getElementById("gameContainer");
 
   const assetsToPreload = [
-    // Player
     "assets/player-run-right.gif",
     "assets/player-run-left.gif",
     "assets/player-shoot-left.gif",
     "assets/player-shoot-right.gif",
     "assets/splash.gif",
-
-    // Bullets
     "assets/bullet-left.png",
-
-    // Zombies
     "assets/zombie-run-right.gif",
     "assets/zombie-run-left.gif",
     "assets/zombie-dead.png",
-
-    // Decorations
     "assets/guitar-character.gif",
     "assets/armored-bus.png",
-
-    // Sounds
     "assets/sound/gunshot.mp3",
     "assets/sound/background-music-01.mp3"
   ];
@@ -58,20 +49,16 @@ document.addEventListener('DOMContentLoaded', () => {
   document.getElementById("restartBtn").addEventListener("click", () => {
     restartGame();
   });
-  
-  
 
   preloadAssets(assetsToPreload).then(() => {
-    // Show the start button once assets are loaded
     const startScreen = document.getElementById("startScreen");
     const startBtn = document.getElementById("startBtn");
-  
+
     startBtn.addEventListener("click", () => {
       startScreen.style.display = "none";
       initGame();
     });
   });
-  
 
   function initGame() {
     const character1 = document.createElement("img");
@@ -99,10 +86,12 @@ document.addEventListener('DOMContentLoaded', () => {
     const spawnInterval = 2000;
     let hasTriggeredRightSideZombies = false;
 
-    const killCountText = document.getElementById('killCountText');
-    killCount = 0;
-    killCountText.textContent = `Kills: ${killCount}`;
+    let bulletIntervals = [];
+    let zombieWaveTimeouts = [];
 
+    const killCountText = document.getElementById('killCountText');
+    let killCount = 0;
+    killCountText.textContent = `Kills: ${killCount}`;
 
     const gunshotAudio = new Audio('assets/sound/gunshot.mp3');
     gunshotAudio.volume = 0.2;
@@ -122,7 +111,6 @@ document.addEventListener('DOMContentLoaded', () => {
       if (movingLeft) character1Pos.x -= speed;
       character1.style.left = `${character1Pos.x}px`;
     }
-
 
     document.addEventListener('keydown', (event) => {
       if (isGameOver) return;
@@ -186,6 +174,8 @@ document.addEventListener('DOMContentLoaded', () => {
           clearInterval(moveBullet);
         }
       }, 10);
+
+      bulletIntervals.push(moveBullet);
     }
 
     function startShooting() {
@@ -270,7 +260,6 @@ document.addEventListener('DOMContentLoaded', () => {
       killCount++;
       killCountText.textContent = `Kills: ${killCount}`;
 
-
       const fade = setInterval(() => {
         opacity -= 0.05;
         z.el.style.opacity = opacity;
@@ -282,46 +271,73 @@ document.addEventListener('DOMContentLoaded', () => {
       }, 50);
     }
 
+    function cleanupGame() {
+      clearInterval(gameLoop);
+      clearInterval(spawnLoop);
+
+      bulletIntervals.forEach(i => clearInterval(i));
+      bulletIntervals = [];
+
+      zombieWaveTimeouts.forEach(t => clearTimeout(t));
+      zombieWaveTimeouts = [];
+
+      bullets.forEach(({ bullet }) => {
+        if (gameContainer.contains(bullet)) gameContainer.removeChild(bullet);
+      });
+      bullets = [];
+
+      zombies.forEach(z => {
+        if (gameContainer.contains(z.el)) gameContainer.removeChild(z.el);
+      });
+      zombies = [];
+    }
+
     function gameOver() {
       if (isGameOver) return;
       isGameOver = true;
-
-      movingLeft = false;
-      movingRight = false;
+    
+      cleanupGame();
       stopShooting();
       bgMusic.pause();
-
+    
+      // Splash animation (player death)
       character1.src = "assets/splash.gif";
       character1.style.height = '120px';
       character1.style.width = '120px';
-
+    
+      // Create the censored.gif overlay image
+      const censoredImg = document.createElement('img');
+      censoredImg.src = 'assets/censored.gif';
+      censoredImg.style.position = 'absolute';
+      censoredImg.style.left = `${character1Pos.x - 20}px`;
+      censoredImg.style.bottom = `${character1Pos.y}px`;
+      censoredImg.style.width = '100px'; // Adjust as needed
+      censoredImg.style.height = '60px'; // Adjust as needed
+      censoredImg.style.zIndex = '15'; // Ensure it's above splash
+      gameContainer.appendChild(censoredImg);
+    
+      // Optional: Keep the original red "CENSORED" text, or remove this block if not needed
       const censoredText = document.createElement('div');
       censoredText.textContent = 'CENSORED';
       censoredText.style.position = 'absolute';
-      censoredText.style.left = `${character1Pos.x - 18}px`;
+      censoredText.style.left = `${character1Pos.x - 25}px`;
       censoredText.style.bottom = `${character1Pos.y + 10}px`;
       censoredText.style.fontSize = '20px';
       censoredText.style.fontWeight = 'bold';
       censoredText.style.color = 'red';
-      censoredText.style.textAlign = 'center';
-      censoredText.style.zIndex = '15';
+      censoredText.style.zIndex = '16';
       gameContainer.appendChild(censoredText);
-
-      clearInterval(gameLoop);
-      clearInterval(spawnLoop);
-
-      // Show restart button
+    
       document.getElementById("restartScreen").style.display = "flex";
     }
+    
 
     function gameWin() {
       if (isGameOver) return;
       isGameOver = true;
 
+      cleanupGame();
       stopShooting();
-      movingLeft = false;
-      movingRight = false;
-
       bgMusic.pause();
 
       character1.src = "assets/player-run-right.gif";
@@ -336,15 +352,10 @@ document.addEventListener('DOMContentLoaded', () => {
       winText.style.fontSize = '24px';
       winText.style.fontWeight = 'bold';
       winText.style.color = 'lime';
-      winText.style.textAlign = 'center';
-      winText.style.zIndex = '15';
       winText.style.textShadow = '2px 2px black';
+      winText.style.zIndex = '15';
       gameContainer.appendChild(winText);
 
-      clearInterval(gameLoop);
-      clearInterval(spawnLoop);
-
-      // Show restart button
       document.getElementById("restartScreen").style.display = "flex";
     }
 
@@ -363,18 +374,20 @@ document.addEventListener('DOMContentLoaded', () => {
     function spawnZombieWaveFromRight(count = 3) {
       for (let i = 0; i < count; i++) {
         const delay = i * 500;
-        setTimeout(() => {
+        const timeout = setTimeout(() => {
           const zombie = document.createElement("img");
+          zombie.src = "assets/zombie-run-left.gif";
           zombie.style.position = 'absolute';
           zombie.style.height = '60px';
           zombie.style.width = '60px';
           zombie.classList.add("character");
-          zombie.src = "assets/zombie-run-left.gif";
+
           const startX = window.innerWidth + Math.floor(Math.random() * 100);
           const startY = 0;
           zombie.style.left = `${startX}px`;
           zombie.style.bottom = `${startY}px`;
           gameContainer.appendChild(zombie);
+
           const newZombie = {
             el: zombie,
             fromLeft: false,
@@ -384,9 +397,11 @@ document.addEventListener('DOMContentLoaded', () => {
             hitThreshold: Math.floor(Math.random() * 2) + 3,
             dead: false
           };
+
           zombies.push(newZombie);
           zombieCount++;
         }, delay);
+        zombieWaveTimeouts.push(timeout);
       }
     }
 
@@ -399,30 +414,26 @@ document.addEventListener('DOMContentLoaded', () => {
     const spawnLoop = setInterval(spawnZombie, spawnInterval);
 
     function addArmoredBus() {
-      const guitarCharacter = document.createElement("img");
-      guitarCharacter.src = "assets/armored-bus.png";
-      guitarCharacter.alt = "Armored bus";
-      guitarCharacter.style.position = "absolute";
-      guitarCharacter.style.width = "300px";
-      guitarCharacter.style.height = "120px";
-      guitarCharacter.style.right = "20px";
-      guitarCharacter.style.bottom = "0";
-      guitarCharacter.style.zIndex = "10";
-
-      gameContainer.appendChild(guitarCharacter);
+      const bus = document.createElement("img");
+      bus.src = "assets/armored-bus.png";
+      bus.style.position = "absolute";
+      bus.style.width = "300px";
+      bus.style.height = "120px";
+      bus.style.right = "20px";
+      bus.style.bottom = "0";
+      bus.style.zIndex = "10";
+      gameContainer.appendChild(bus);
     }
 
     function addGuitarCharacter() {
       const guitarCharacter = document.createElement("img");
       guitarCharacter.src = "assets/guitar-character.gif";
-      guitarCharacter.alt = "Guitar Character";
       guitarCharacter.style.position = "absolute";
       guitarCharacter.style.width = "65px";
       guitarCharacter.style.height = "65px";
       guitarCharacter.style.right = "160px";
       guitarCharacter.style.bottom = "100px";
       guitarCharacter.style.zIndex = "10";
-
       gameContainer.appendChild(guitarCharacter);
     }
 
