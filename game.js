@@ -14,7 +14,9 @@ document.addEventListener('DOMContentLoaded', () => {
     "assets/guitar-character.gif",
     "assets/armored-bus.png",
     "assets/sound/gunshot.mp3",
-    "assets/sound/background-music-01.mp3"
+    "assets/sound/background-music-01.mp3",
+    "assets/sound/zombie-attack.mp3",
+    "assets/sound/eating-flesh.mp3"
   ];
 
   function preloadAssets(assets) {
@@ -50,14 +52,18 @@ document.addEventListener('DOMContentLoaded', () => {
     restartGame();
   });
 
-  preloadAssets(assetsToPreload).then(() => {
-    const startScreen = document.getElementById("startScreen");
-    const startBtn = document.getElementById("startBtn");
+  const loaderScreen = document.getElementById("loaderScreen");
+  const startScreen = document.getElementById("startScreen");
 
-    startBtn.addEventListener("click", () => {
-      startScreen.style.display = "none";
-      initGame();
-    });
+  preloadAssets(assetsToPreload).then(() => {
+    loaderScreen.style.display = "none";
+    startScreen.style.display = "flex";
+
+  const startBtn = document.getElementById("startBtn");
+  startBtn.addEventListener("click", () => {
+    startScreen.style.display = "none";
+    initGame();
+  });
   });
 
   function initGame() {
@@ -95,6 +101,12 @@ document.addEventListener('DOMContentLoaded', () => {
 
     const gunshotAudio = new Audio('assets/sound/gunshot.mp3');
     gunshotAudio.volume = 0.2;
+
+    const zombieAtackAudio = new Audio('assets/sound/zombie-attack.mp3');
+    zombieAtackAudio.volume = 0.4;
+
+    const zombieEatingFleshAudio = new Audio('assets/sound/eating-flesh.mp3');
+    zombieEatingFleshAudio.volume = 0.4;
 
     const bgMusic = new Audio('assets/sound/background-music-01.mp3');
     bgMusic.loop = true;
@@ -299,6 +311,8 @@ document.addEventListener('DOMContentLoaded', () => {
       cleanupGame();
       stopShooting();
       bgMusic.pause();
+      zombieAtackAudio.currentTime = 0;
+      zombieAtackAudio.play();
     
       // Splash animation (player death)
       character1.src = "assets/splash.gif";
@@ -329,6 +343,9 @@ document.addEventListener('DOMContentLoaded', () => {
       gameContainer.appendChild(censoredText);
     
       document.getElementById("restartScreen").style.display = "flex";
+
+      zombieEatingFleshAudio.currentTime = 0;
+      zombieEatingFleshAudio.play();
     }
     
 
