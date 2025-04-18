@@ -52,14 +52,18 @@ document.addEventListener('DOMContentLoaded', () => {
     restartGame();
   });
 
-  preloadAssets(assetsToPreload).then(() => {
-    const startScreen = document.getElementById("startScreen");
-    const startBtn = document.getElementById("startBtn");
+  const loaderScreen = document.getElementById("loaderScreen");
+  const startScreen = document.getElementById("startScreen");
 
-    startBtn.addEventListener("click", () => {
-      startScreen.style.display = "none";
-      initGame();
-    });
+  preloadAssets(assetsToPreload).then(() => {
+    loaderScreen.style.display = "none";
+    startScreen.style.display = "flex";
+
+  const startBtn = document.getElementById("startBtn");
+  startBtn.addEventListener("click", () => {
+    startScreen.style.display = "none";
+    initGame();
+  });
   });
 
   function initGame() {
