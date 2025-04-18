@@ -295,28 +295,42 @@ document.addEventListener('DOMContentLoaded', () => {
     function gameOver() {
       if (isGameOver) return;
       isGameOver = true;
-
+    
       cleanupGame();
       stopShooting();
       bgMusic.pause();
-
+    
+      // Splash animation (player death)
       character1.src = "assets/splash.gif";
       character1.style.height = '120px';
       character1.style.width = '120px';
-
+    
+      // Create the censored.gif overlay image
+      const censoredImg = document.createElement('img');
+      censoredImg.src = 'assets/censored.gif';
+      censoredImg.style.position = 'absolute';
+      censoredImg.style.left = `${character1Pos.x - 20}px`;
+      censoredImg.style.bottom = `${character1Pos.y}px`;
+      censoredImg.style.width = '100px'; // Adjust as needed
+      censoredImg.style.height = '60px'; // Adjust as needed
+      censoredImg.style.zIndex = '15'; // Ensure it's above splash
+      gameContainer.appendChild(censoredImg);
+    
+      // Optional: Keep the original red "CENSORED" text, or remove this block if not needed
       const censoredText = document.createElement('div');
       censoredText.textContent = 'CENSORED';
       censoredText.style.position = 'absolute';
-      censoredText.style.left = `${character1Pos.x - 18}px`;
+      censoredText.style.left = `${character1Pos.x - 25}px`;
       censoredText.style.bottom = `${character1Pos.y + 10}px`;
       censoredText.style.fontSize = '20px';
       censoredText.style.fontWeight = 'bold';
       censoredText.style.color = 'red';
-      censoredText.style.zIndex = '15';
+      censoredText.style.zIndex = '16';
       gameContainer.appendChild(censoredText);
-
+    
       document.getElementById("restartScreen").style.display = "flex";
     }
+    
 
     function gameWin() {
       if (isGameOver) return;
