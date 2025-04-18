@@ -193,3 +193,37 @@ body {
   width: 24px;
   height: 24px;
 }
+
+
+#rotateWarning {
+  display: none;
+  position: fixed;
+  top: 0; left: 0; right: 0; bottom: 0;
+  background: #000;
+  color: white;
+  font-size: 22px;
+  font-weight: bold;
+  text-align: center;
+  justify-content: center;
+  align-items: center;
+  z-index: 1000;
+  padding: 20px;
+}
+
+/* Show only in portrait orientation on small screens */
+@media screen and (orientation: portrait) and (max-width: 768px) {
+  #rotateWarning {
+    display: flex;
+  }
+
+  body {
+    overflow: hidden;
+  }
+
+  #gameContainer,
+  #startScreen,
+  #killCount,
+  #restartScreen {
+    display: none !important;
+  }
+}

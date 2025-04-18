@@ -1,4 +1,9 @@
 document.addEventListener('DOMContentLoaded', () => {
+
+  if (window.innerHeight > window.innerWidth) {
+    document.getElementById("rotateWarning").style.display = "flex";
+  }
+  
   const gameContainer = document.getElementById("gameContainer");
 
   const assetsToPreload = [
@@ -51,6 +56,8 @@ document.addEventListener('DOMContentLoaded', () => {
   document.getElementById("restartBtn").addEventListener("click", () => {
     restartGame();
   });
+
+  const isSmallScreen = window.innerWidth < 600;
 
   const loaderScreen = document.getElementById("loaderScreen");
   const startScreen = document.getElementById("startScreen");
@@ -457,4 +464,19 @@ document.addEventListener('DOMContentLoaded', () => {
     addArmoredBus();
     addGuitarCharacter();
   }
+
+
+  window.addEventListener("orientationchange", () => {
+    // Reload or just update the warning visibility
+    setTimeout(() => {
+      if (window.matchMedia("(orientation: landscape)").matches) {
+        document.getElementById("rotateWarning").style.display = "none";
+        document.body.style.overflow = "";
+      } else {
+        document.getElementById("rotateWarning").style.display = "flex";
+        document.body.style.overflow = "hidden";
+      }
+    }, 300);
+  });
+  
 });
