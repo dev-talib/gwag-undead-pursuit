@@ -24,14 +24,14 @@ body {
 
 
 .character {
-  width: 60px;
-  height: 60px;
+  /* width: 60px;
+  height: 60px; */
   position: absolute;
   bottom: 0;
-  background: url('character-sprite.png') no-repeat center center;
-  background-size: contain;
+  /* background: url('character-sprite.png') no-repeat center center; */
+  /* background-size: contain; */
   animation: characterAnimation 1s infinite alternate; 
-}
+} 
 
 .bullet {
   width: 20px;
@@ -150,7 +150,7 @@ body {
   left: 0;
   width: 100%;
   height: 100%;
-  background: rgba(0, 0, 0, 0.8);
+  background: rgba(0, 0, 0, 0.4);
   display: flex;
   justify-content: center;
   align-items: center;
