@@ -149,6 +149,12 @@ html, body {
   background-color: #00ddb3;
 }
 
+@media only screen and (max-width: 768px) {
+  #instructions{
+    margin-bottom: 15px;
+  }
+}
+
 #restartScreen {
   position: fixed;
   top: 0;
