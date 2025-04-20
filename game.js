@@ -1,6 +1,11 @@
 document.addEventListener('DOMContentLoaded', () => {
-  const gameContainer = document.getElementById("gameContainer");
 
+  if (window.innerHeight > window.innerWidth) {
+    document.getElementById("rotateWarning").style.display = "flex";
+  }
+  
+  const gameContainer = document.getElementById("gameContainer");
+  
   const assetsToPreload = [
     "assets/player-run-right.gif",
     "assets/player-run-left.gif",
@@ -41,6 +46,7 @@ document.addEventListener('DOMContentLoaded', () => {
       });
     });
   }
+  
 
   function restartGame() {
     gameContainer.innerHTML = "";
@@ -51,6 +57,14 @@ document.addEventListener('DOMContentLoaded', () => {
   document.getElementById("restartBtn").addEventListener("click", () => {
     restartGame();
   });
+
+  const isSmallScreen = window.innerWidth < 1000;
+
+  if(!isSmallScreen){
+    document.querySelectorAll(".touch-btn").forEach(btn => {
+      btn.style.display = "none";
+    });
+  }
 
   const loaderScreen = document.getElementById("loaderScreen");
   const startScreen = document.getElementById("startScreen");
@@ -76,7 +90,9 @@ document.addEventListener('DOMContentLoaded', () => {
     let character1Pos = { x: -100, y: 0 };
     character1.style.left = `${character1Pos.x}px`;
     character1.style.bottom = `${character1Pos.y}px`;
-
+    character1.style.height = isSmallScreen ? '45px' : '60px';
+    character1.style.width = isSmallScreen ? '35px' : '60px';
+    
     let isShooting = false;
     let shootInterval = null;
     let isGameOver = false;
@@ -100,13 +116,14 @@ document.addEventListener('DOMContentLoaded', () => {
     killCountText.textContent = `Kills: ${killCount}`;
 
     const gunshotAudio = new Audio('assets/sound/gunshot.mp3');
-    gunshotAudio.volume = 0.2;
+    gunshotAudio.volume = isSmallScreen? 0.1 : 0.2;
 
     const zombieAtackAudio = new Audio('assets/sound/zombie-attack.mp3');
-    zombieAtackAudio.volume = 0.4;
+    zombieAtackAudio.volume = isSmallScreen? 0.3 : 0.4;
 
     const zombieEatingFleshAudio = new Audio('assets/sound/eating-flesh.mp3');
     zombieEatingFleshAudio.volume = 0.4;
+    zombieEatingFleshAudio.pause(); // Stop if already playing
 
     const bgMusic = new Audio('assets/sound/background-music-01.mp3');
     bgMusic.loop = true;
@@ -130,16 +147,16 @@ document.addEventListener('DOMContentLoaded', () => {
         stopShooting();
         movingRight = false;
         movingLeft = true;
-        character1.style.height = '60px';
-        character1.style.width = '60px';
+        character1.style.height = isSmallScreen? '45px' : '60px';
+        character1.style.width = isSmallScreen? '35px' : '60px';
         pastMovement = 'left';
         character1.src = "assets/player-run-left.gif";
       } else if (event.key === "ArrowRight") {
         stopShooting();
         movingLeft = false;
         movingRight = true;
-        character1.style.height = '60px';
-        character1.style.width = '60px';
+        character1.style.height = isSmallScreen? '45px' : '60px';
+        character1.style.width = isSmallScreen? '35px' : '60px';
         pastMovement = 'right';
         character1.src = "assets/player-run-right.gif";
       } else if (event.code === "Space" && !isShooting) {
@@ -151,15 +168,15 @@ document.addEventListener('DOMContentLoaded', () => {
       const bullet = document.createElement('img');
       bullet.src = "assets/bullet-left.png";
       bullet.style.position = 'absolute';
-      bullet.style.height = '1px';
-      bullet.style.width = '5px';
+      bullet.style.height = isSmallScreen? '0.5px' : '1px';
+      bullet.style.width = isSmallScreen? '2.5px' : '5px';
 
       playGunshotSound();
 
       const direction = pastMovement === 'left' ? -1 : 1;
       const bulletPos = {
         x: character1Pos.x + (direction === 1 ? 60 : -20),
-        y: character1Pos.y + 40
+        y: character1Pos.y + (isSmallScreen? 30 : 40)
       };
 
       bullet.style.left = `${bulletPos.x}px`;
@@ -167,7 +184,7 @@ document.addEventListener('DOMContentLoaded', () => {
       gameContainer.appendChild(bullet);
       bullets.push({ bullet, bulletPos });
 
-      const bulletSpeed = 5;
+      const bulletSpeed = isSmallScreen ? 6: 5;
       const moveBullet = setInterval(() => {
         bulletPos.x += direction * bulletSpeed;
         bullet.style.left = `${bulletPos.x}px`;
@@ -191,21 +208,34 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     function startShooting() {
+      if (isShooting) return; // Already shooting? Do nothing
+    
       isShooting = true;
       character1.src = pastMovement === 'left' ? "assets/player-shoot-left.gif" : "assets/player-shoot-right.gif";
       movingLeft = false;
       movingRight = false;
-      character1.style.height = '80px';
-      character1.style.width = '120px';
-      shootInterval = setInterval(shoot, 400);
+      character1.style.height = isSmallScreen ? '60px' : '80px';
+      character1.style.width = isSmallScreen ? '80px' : '120px';
+    
+      shootInterval = setInterval(shoot, 500);
     }
+    
+    
 
     function stopShooting() {
       if (isShooting) {
+        
         clearInterval(shootInterval);
+        shootInterval = null;
         isShooting = false;
+    
+        // Reset character sprite to run
+        character1.src = pastMovement === 'left' ? "assets/player-run-left.gif" : "assets/player-run-right.gif";
+        character1.style.height = isSmallScreen ? '45px' : '60px';
+        character1.style.width = isSmallScreen ? '35px' : '60px';
       }
     }
+    
 
     function playGunshotSound() {
       gunshotAudio.currentTime = 0;
@@ -217,8 +247,8 @@ document.addEventListener('DOMContentLoaded', () => {
 
       const zombie = document.createElement("img");
       zombie.style.position = 'absolute';
-      zombie.style.height = '60px';
-      zombie.style.width = '60px';
+      zombie.style.height = isSmallScreen? '45px' : '60px';
+      zombie.style.width = isSmallScreen? '45px' : '60px';
       zombie.classList.add("character");
 
       const fromLeft = Math.random() > 0.5;
@@ -234,7 +264,7 @@ document.addEventListener('DOMContentLoaded', () => {
         el: zombie,
         fromLeft,
         pos: { x: startX, y: startY },
-        speed: 0.8,
+        speed: isSmallScreen ? 0.6 : 0.8,
         hits: 0,
         hitThreshold: Math.floor(Math.random() * 3) + 2,
         dead: false
@@ -250,7 +280,7 @@ document.addEventListener('DOMContentLoaded', () => {
         z.pos.x += z.fromLeft ? z.speed : -z.speed;
         z.el.style.left = `${z.pos.x}px`;
 
-        if (Math.abs(z.pos.x - character1Pos.x) < 50 && Math.abs(z.pos.y - character1Pos.y) < 50) {
+        if (Math.abs(z.pos.x - character1Pos.x) < (isSmallScreen ? 20 : 50) && Math.abs(z.pos.y - character1Pos.y) < (isSmallScreen ? 20 : 50)) {
           gameOver();
         }
 
@@ -265,8 +295,8 @@ document.addEventListener('DOMContentLoaded', () => {
     function killZombie(z) {
       z.dead = true;
       z.el.src = "assets/zombie-dead.png";
-      z.el.style.height = '45px';
-      z.el.style.width = '45px';
+      z.el.style.height = isSmallScreen? '35px' : '45px';
+      z.el.style.width = isSmallScreen? '35px' : '45px';
       let opacity = 1;
 
       killCount++;
@@ -323,18 +353,17 @@ document.addEventListener('DOMContentLoaded', () => {
       const censoredImg = document.createElement('img');
       censoredImg.src = 'assets/censored.gif';
       censoredImg.style.position = 'absolute';
-      censoredImg.style.left = `${character1Pos.x - 20}px`;
+      censoredImg.style.left = isSmallScreen? `${character1Pos.x - 12}px` : `${character1Pos.x - 20}px`;
       censoredImg.style.bottom = `${character1Pos.y}px`;
-      censoredImg.style.width = '100px'; // Adjust as needed
-      censoredImg.style.height = '60px'; // Adjust as needed
+      censoredImg.style.width = isSmallScreen? '70px' : '100px'; // Adjust as needed
+      censoredImg.style.height = isSmallScreen? '45px' : '60px'; // Adjust as needed
       censoredImg.style.zIndex = '15'; // Ensure it's above splash
       gameContainer.appendChild(censoredImg);
     
-      // Optional: Keep the original red "CENSORED" text, or remove this block if not needed
       const censoredText = document.createElement('div');
       censoredText.textContent = 'CENSORED';
       censoredText.style.position = 'absolute';
-      censoredText.style.left = `${character1Pos.x - 25}px`;
+      censoredText.style.left = isSmallScreen? `${character1Pos.x - 30}px` : `${character1Pos.x - 25}px`;
       censoredText.style.bottom = `${character1Pos.y + 10}px`;
       censoredText.style.fontSize = '20px';
       censoredText.style.fontWeight = 'bold';
@@ -357,14 +386,12 @@ document.addEventListener('DOMContentLoaded', () => {
       stopShooting();
       bgMusic.pause();
 
-      character1.src = "assets/player-run-right.gif";
-      character1.style.height = '60px';
-      character1.style.width = '60px';
+      character1.style.display = "none";
 
       const winText = document.createElement('div');
       winText.textContent = 'YOU ESCAPED!';
       winText.style.position = 'absolute';
-      winText.style.left = `${character1Pos.x}px`;
+      winText.style.left = isSmallScreen? `${character1Pos.x - 150}px` : `${character1Pos.x}px`;
       winText.style.bottom = `${character1Pos.y + 80}px`;
       winText.style.fontSize = '24px';
       winText.style.fontWeight = 'bold';
@@ -377,16 +404,28 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     function checkWinCondition() {
-      const busX = window.innerWidth - 120 - 20;
-      if (!hasTriggeredRightSideZombies && character1Pos.x >= busX - 300) {
+      const screenWidth = window.innerWidth;
+      const busOffset = isSmallScreen? 80 : 140; // bus width (120) + margin (20)
+      const busX = screenWidth - busOffset;
+    
+      // Dynamic trigger distances based on screen size
+      const zombieTriggerDistance = isSmallScreen ? 200 : 300;
+      const winTriggerDistance = isSmallScreen ? 5 : 30;
+    
+      const distanceToBus = busX - character1Pos.x;
+    
+      // Trigger zombie wave
+      if (!hasTriggeredRightSideZombies && distanceToBus <= zombieTriggerDistance) {
         hasTriggeredRightSideZombies = true;
         spawnZombieWaveFromRight();
       }
-
-      if (character1Pos.x >= busX - 60) {
+    
+      // Trigger win
+      if (distanceToBus <= winTriggerDistance) {
         gameWin();
       }
     }
+    
 
     function spawnZombieWaveFromRight(count = 3) {
       for (let i = 0; i < count; i++) {
@@ -395,8 +434,8 @@ document.addEventListener('DOMContentLoaded', () => {
           const zombie = document.createElement("img");
           zombie.src = "assets/zombie-run-left.gif";
           zombie.style.position = 'absolute';
-          zombie.style.height = '60px';
-          zombie.style.width = '60px';
+          zombie.style.height = isSmallScreen ? '45px' : '60px';
+          zombie.style.width = isSmallScreen ? '45px' : '60px';
           zombie.classList.add("character");
 
           const startX = window.innerWidth + Math.floor(Math.random() * 100);
@@ -434,8 +473,8 @@ document.addEventListener('DOMContentLoaded', () => {
       const bus = document.createElement("img");
       bus.src = "assets/armored-bus.png";
       bus.style.position = "absolute";
-      bus.style.width = "300px";
-      bus.style.height = "120px";
+      bus.style.width =  isSmallScreen? "120px" : "300px";
+      bus.style.height = isSmallScreen? "60px" : "120px";
       bus.style.right = "20px";
       bus.style.bottom = "0";
       bus.style.zIndex = "10";
@@ -446,15 +485,70 @@ document.addEventListener('DOMContentLoaded', () => {
       const guitarCharacter = document.createElement("img");
       guitarCharacter.src = "assets/guitar-character.gif";
       guitarCharacter.style.position = "absolute";
-      guitarCharacter.style.width = "65px";
-      guitarCharacter.style.height = "65px";
-      guitarCharacter.style.right = "160px";
-      guitarCharacter.style.bottom = "100px";
+      guitarCharacter.style.width = isSmallScreen? "40px": "65px";
+      guitarCharacter.style.height = isSmallScreen? "40px": "65px";
+      guitarCharacter.style.right = isSmallScreen? "70px": "160px";
+      guitarCharacter.style.bottom = isSmallScreen? "55px": "100px";
       guitarCharacter.style.zIndex = "10";
       gameContainer.appendChild(guitarCharacter);
     }
 
     addArmoredBus();
     addGuitarCharacter();
+
+    leftBtn.addEventListener("touchstart", (e) => {
+      e.preventDefault();
+      if (isGameOver) return;
+    
+      stopShooting(); // <== Stop shooting on move
+      movingRight = false;
+      movingLeft = true;
+      pastMovement = 'left';
+      character1.src = "assets/player-run-left.gif";
+      character1.style.height = isSmallScreen ? '45px' : '60px';
+      character1.style.width = isSmallScreen ? '35px' : '60px';
+    });
+    
+    rightBtn.addEventListener("touchstart", (e) => {
+      e.preventDefault();
+      if (isGameOver) return;
+    
+      stopShooting(); // <== Stop shooting on move
+      movingLeft = false;
+      movingRight = true;
+      pastMovement = 'right';
+      character1.src = "assets/player-run-right.gif";
+      character1.style.height = isSmallScreen ? '45px' : '60px';
+      character1.style.width = isSmallScreen ? '35px' : '60px';
+    });
+    
+    shootBtn.addEventListener("touchstart", (e) => {
+      e.preventDefault();
+      if (isGameOver) return;
+    
+      movingLeft = false;
+      movingRight = false;
+    
+      startShooting(); 
+    });
+    
+    
   }
+
+
+  window.addEventListener("orientationchange", () => {
+    setTimeout(() => {
+      if (window.matchMedia("(orientation: landscape)").matches) {
+        document.getElementById("rotateWarning").style.display = "none";
+        document.body.style.overflow = "";
+      } else {
+        document.getElementById("rotateWarning").style.display = "flex";
+        document.body.style.overflow = "hidden";
+      }
+    }, 300);
+  });
+
+  
 });
+
+

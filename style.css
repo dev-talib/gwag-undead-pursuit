@@ -1,10 +1,15 @@
 /* style.css */
-body {
+html, body {
   margin: 0;
+  padding: 0;
   overflow: hidden;
-  font-family: 'Arial', sans-serif;
-  background-color: black;
+  position: fixed;
+  width: 100%;
+  height: 100%;
+  touch-action: none; /* Prevents default gestures like pull-to-refresh */
+  background-color: #000;
 }
+
 
 #gameContainer {
   position: relative;
@@ -19,19 +24,19 @@ body {
   background-image: url('assets/background/bg_05.jpeg');  /* replace with your image path */
   background-size: cover;                 
   background-position: center;            
-  background-repeat: no-repeat;           
+  background-repeat: no-repeat;     
+  overflow: hidden;
+  touch-action: none;      
 }
 
 
 .character {
-  width: 60px;
-  height: 60px;
+  /* width: 60px;
+  height: 60px; */
   position: absolute;
   bottom: 0;
-  background: url('character-sprite.png') no-repeat center center;
-  background-size: contain;
   animation: characterAnimation 1s infinite alternate; 
-}
+} 
 
 .bullet {
   width: 20px;
@@ -54,7 +59,7 @@ body {
   justify-content: center;
   align-items: center;
   color: white;
-  z-index: 9999;
+  z-index: 10000;
 }
 
 .loader {
@@ -144,13 +149,19 @@ body {
   background-color: #00ddb3;
 }
 
+@media only screen and (max-width: 768px) {
+  #instructions{
+    margin-bottom: 15px;
+  }
+}
+
 #restartScreen {
   position: fixed;
   top: 0;
   left: 0;
   width: 100%;
   height: 100%;
-  background: rgba(0, 0, 0, 0.8);
+  background: rgba(0, 0, 0, 0.4);
   display: flex;
   justify-content: center;
   align-items: center;
@@ -192,4 +203,71 @@ body {
 #zombieIcon {
   width: 24px;
   height: 24px;
+}
+
+
+#rotateWarning {
+  display: none;
+  position: fixed;
+  top: 0; left: 0; right: 0; bottom: 0;
+  background: #000;
+  color: white;
+  font-size: 22px;
+  font-weight: bold;
+  text-align: center;
+  justify-content: center;
+  align-items: center;
+  z-index: 1000;
+  padding: 20px;
+}
+
+
+
+/* Show only in portrait orientation on small screens */
+@media screen and (orientation: portrait) and (max-width: 768px) {
+  #rotateWarning {
+    display: flex;
+  }
+
+  body {
+    overflow: hidden;
+  }
+
+  #gameContainer,
+  #startScreen,
+  #killCount,
+  #restartScreen {
+    display: none !important;
+  }
+
+}
+
+.touch-btn {
+  position: absolute;
+  width: 100px; /* Smaller button size */
+  height: 100px; /* Smaller button size */
+  background-color: rgba(0, 0, 0, 0.3); /* Transparent background */
+  border-radius: 50%;
+  border: none;
+  z-index: 10; /* Ensure buttons are above other elements */
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: white;
+  font-size: 25px; /* Smaller font size */
+}
+
+#leftBtn {
+  left: 10%; /* Position left button at the left */
+  top: 10%; /* Position at the top */
+}
+
+#rightBtn {
+  right: 10%; /* Position right button at the right */
+  top: 10%; /* Position at the top */
+}
+
+#shootBtn {
+  right: 10%; /* Position shoot button at the right */
+  top: 45%; /* Slightly below the right button */
 }

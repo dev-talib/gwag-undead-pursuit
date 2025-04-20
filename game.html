@@ -8,6 +8,10 @@
 </head>
 <body>
 
+  <div id="rotateWarning">
+    <p>Please rotate your device to landscape mode 🔄</p>
+  </div>
+
   <div id="killCount">
     <img src="assets/zombie-icon-01.png" alt="Zombie icon" id="zombieIcon" />
     <span id="killCountText">Kills: 0</span>
@@ -16,6 +20,18 @@
   <div id="gameContainer">   
     <!-- Character will be added via JS -->
   </div>
+
+  <div class="touch-btn" id="leftBtn">
+    <span>&#8592;</span> <!-- Left arrow -->
+  </div>
+  <div class="touch-btn" id="rightBtn">
+    <span>&#8594;</span> <!-- Right arrow -->
+  </div>
+  <div class="touch-btn" id="shootBtn">
+    <span>💥</span> <!-- Explosion -->
+  </div>
+  
+  
 
   <div id="loaderScreen">
     <div class="loader"></div>
