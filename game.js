@@ -5,7 +5,7 @@ document.addEventListener('DOMContentLoaded', () => {
   }
   
   const gameContainer = document.getElementById("gameContainer");
-
+  
   const assetsToPreload = [
     "assets/player-run-right.gif",
     "assets/player-run-left.gif",
@@ -60,6 +60,11 @@ document.addEventListener('DOMContentLoaded', () => {
 
   const isSmallScreen = window.innerWidth < 1000;
 
+  if(!isSmallScreen){
+    document.querySelectorAll(".touch-btn").forEach(btn => {
+      btn.style.display = "none";
+    });
+  }
 
   const loaderScreen = document.getElementById("loaderScreen");
   const startScreen = document.getElementById("startScreen");
@@ -111,13 +116,14 @@ document.addEventListener('DOMContentLoaded', () => {
     killCountText.textContent = `Kills: ${killCount}`;
 
     const gunshotAudio = new Audio('assets/sound/gunshot.mp3');
-    gunshotAudio.volume = 0.2;
+    gunshotAudio.volume = isSmallScreen? 0.1 : 0.2;
 
     const zombieAtackAudio = new Audio('assets/sound/zombie-attack.mp3');
-    zombieAtackAudio.volume = 0.4;
+    zombieAtackAudio.volume = isSmallScreen? 0.3 : 0.4;
 
     const zombieEatingFleshAudio = new Audio('assets/sound/eating-flesh.mp3');
     zombieEatingFleshAudio.volume = 0.4;
+    zombieEatingFleshAudio.pause(); // Stop if already playing
 
     const bgMusic = new Audio('assets/sound/background-music-01.mp3');
     bgMusic.loop = true;
@@ -178,7 +184,7 @@ document.addEventListener('DOMContentLoaded', () => {
       gameContainer.appendChild(bullet);
       bullets.push({ bullet, bulletPos });
 
-      const bulletSpeed = 5;
+      const bulletSpeed = isSmallScreen ? 6: 5;
       const moveBullet = setInterval(() => {
         bulletPos.x += direction * bulletSpeed;
         bullet.style.left = `${bulletPos.x}px`;
@@ -202,21 +208,34 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     function startShooting() {
+      if (isShooting) return; // Already shooting? Do nothing
+    
       isShooting = true;
       character1.src = pastMovement === 'left' ? "assets/player-shoot-left.gif" : "assets/player-shoot-right.gif";
       movingLeft = false;
       movingRight = false;
-      character1.style.height = isSmallScreen? '60px' : '80px';
-      character1.style.width = isSmallScreen? '80px' : '120px';
-      shootInterval = setInterval(shoot, 400);
+      character1.style.height = isSmallScreen ? '60px' : '80px';
+      character1.style.width = isSmallScreen ? '80px' : '120px';
+    
+      shootInterval = setInterval(shoot, 500);
     }
+    
+    
 
     function stopShooting() {
       if (isShooting) {
+        
         clearInterval(shootInterval);
+        shootInterval = null;
         isShooting = false;
+    
+        // Reset character sprite to run
+        character1.src = pastMovement === 'left' ? "assets/player-run-left.gif" : "assets/player-run-right.gif";
+        character1.style.height = isSmallScreen ? '45px' : '60px';
+        character1.style.width = isSmallScreen ? '35px' : '60px';
       }
     }
+    
 
     function playGunshotSound() {
       gunshotAudio.currentTime = 0;
@@ -245,7 +264,7 @@ document.addEventListener('DOMContentLoaded', () => {
         el: zombie,
         fromLeft,
         pos: { x: startX, y: startY },
-        speed: 0.8,
+        speed: isSmallScreen ? 0.6 : 0.8,
         hits: 0,
         hitThreshold: Math.floor(Math.random() * 3) + 2,
         dead: false
@@ -476,11 +495,48 @@ document.addEventListener('DOMContentLoaded', () => {
 
     addArmoredBus();
     addGuitarCharacter();
+
+    leftBtn.addEventListener("touchstart", (e) => {
+      e.preventDefault();
+      if (isGameOver) return;
+    
+      stopShooting(); // <== Stop shooting on move
+      movingRight = false;
+      movingLeft = true;
+      pastMovement = 'left';
+      character1.src = "assets/player-run-left.gif";
+      character1.style.height = isSmallScreen ? '45px' : '60px';
+      character1.style.width = isSmallScreen ? '35px' : '60px';
+    });
+    
+    rightBtn.addEventListener("touchstart", (e) => {
+      e.preventDefault();
+      if (isGameOver) return;
+    
+      stopShooting(); // <== Stop shooting on move
+      movingLeft = false;
+      movingRight = true;
+      pastMovement = 'right';
+      character1.src = "assets/player-run-right.gif";
+      character1.style.height = isSmallScreen ? '45px' : '60px';
+      character1.style.width = isSmallScreen ? '35px' : '60px';
+    });
+    
+    shootBtn.addEventListener("touchstart", (e) => {
+      e.preventDefault();
+      if (isGameOver) return;
+    
+      movingLeft = false;
+      movingRight = false;
+    
+      startShooting(); 
+    });
+    
+    
   }
 
 
   window.addEventListener("orientationchange", () => {
-    // Reload or just update the warning visibility
     setTimeout(() => {
       if (window.matchMedia("(orientation: landscape)").matches) {
         document.getElementById("rotateWarning").style.display = "none";
@@ -491,6 +547,7 @@ document.addEventListener('DOMContentLoaded', () => {
       }
     }, 300);
   });
+
   
 });
 
