@@ -17,11 +17,12 @@ document.addEventListener('DOMContentLoaded', () => {
     "assets/zombie-run-left.gif",
     "assets/zombie-dead.png",
     "assets/guitar-character.gif",
+    "assets/guitar-character-2.gif",
     "assets/armored-bus.png",
     "assets/sound/gunshot.mp3",
     "assets/sound/background-music-01.mp3",
     "assets/sound/zombie-attack.mp3",
-    "assets/sound/eating-flesh.mp3"
+    "assets/sound/zombies-eating.mp3"
   ];
 
   function preloadAssets(assets) {
@@ -49,9 +50,17 @@ document.addEventListener('DOMContentLoaded', () => {
   
 
   function restartGame() {
+    const loaderScreen = document.getElementById("loaderScreen");
+    loaderScreen.style.display = "flex";
+
     gameContainer.innerHTML = "";
     document.getElementById("restartScreen").style.display = "none";
-    initGame();
+  
+    // Wait 2 seconds, then start game
+    setTimeout(() => {
+      loaderScreen.style.display = "none";
+      initGame();
+    }, 2000);
   }
 
   document.getElementById("restartBtn").addEventListener("click", () => {
@@ -121,9 +130,11 @@ document.addEventListener('DOMContentLoaded', () => {
     const zombieAtackAudio = new Audio('assets/sound/zombie-attack.mp3');
     zombieAtackAudio.volume = isSmallScreen? 0.3 : 0.4;
 
-    const zombieEatingFleshAudio = new Audio('assets/sound/eating-flesh.mp3');
+    const zombieEatingFleshAudio = new Audio('assets/sound/zombies-eating.mp3');
     zombieEatingFleshAudio.volume = 0.4;
     zombieEatingFleshAudio.pause(); // Stop if already playing
+
+    let guitarCharacterEl;
 
     const bgMusic = new Audio('assets/sound/background-music-01.mp3');
     bgMusic.loop = true;
@@ -349,14 +360,14 @@ document.addEventListener('DOMContentLoaded', () => {
       character1.style.height = '120px';
       character1.style.width = '120px';
     
-      // Create the censored.gif overlay image
+      // censored.gif overlay image
       const censoredImg = document.createElement('img');
       censoredImg.src = 'assets/censored.gif';
       censoredImg.style.position = 'absolute';
       censoredImg.style.left = isSmallScreen? `${character1Pos.x - 12}px` : `${character1Pos.x - 20}px`;
       censoredImg.style.bottom = `${character1Pos.y}px`;
-      censoredImg.style.width = isSmallScreen? '70px' : '100px'; // Adjust as needed
-      censoredImg.style.height = isSmallScreen? '45px' : '60px'; // Adjust as needed
+      censoredImg.style.width = isSmallScreen? '70px' : '100px';
+      censoredImg.style.height = isSmallScreen? '45px' : '60px'; 
       censoredImg.style.zIndex = '15'; // Ensure it's above splash
       gameContainer.appendChild(censoredImg);
     
@@ -370,11 +381,20 @@ document.addEventListener('DOMContentLoaded', () => {
       censoredText.style.color = 'red';
       censoredText.style.zIndex = '16';
       gameContainer.appendChild(censoredText);
-    
       document.getElementById("restartScreen").style.display = "flex";
 
       zombieEatingFleshAudio.currentTime = 0;
       zombieEatingFleshAudio.play();
+
+      if (guitarCharacterEl) {
+        setTimeout(()=>{
+          guitarCharacterEl.src = "assets/guitar-character-2.gif";
+          guitarCharacterEl.style.width = isSmallScreen ? "48px" : "85px";
+          guitarCharacterEl.style.height = isSmallScreen ? "48px" : "85px";
+          guitarCharacterEl.style.right = isSmallScreen ? "65px" : "160px";
+          guitarCharacterEl.style.bottom = isSmallScreen ? "50px" : "100px";
+        },650);
+      }
     }
     
 
@@ -482,16 +502,17 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     function addGuitarCharacter() {
-      const guitarCharacter = document.createElement("img");
-      guitarCharacter.src = "assets/guitar-character.gif";
-      guitarCharacter.style.position = "absolute";
-      guitarCharacter.style.width = isSmallScreen? "40px": "65px";
-      guitarCharacter.style.height = isSmallScreen? "40px": "65px";
-      guitarCharacter.style.right = isSmallScreen? "70px": "160px";
-      guitarCharacter.style.bottom = isSmallScreen? "55px": "100px";
-      guitarCharacter.style.zIndex = "10";
-      gameContainer.appendChild(guitarCharacter);
+      guitarCharacterEl = document.createElement("img");
+      guitarCharacterEl.src = "assets/guitar-character.gif";
+      guitarCharacterEl.style.position = "absolute";
+      guitarCharacterEl.style.width = isSmallScreen ? "40px" : "65px";
+      guitarCharacterEl.style.height = isSmallScreen ? "40px" : "65px";
+      guitarCharacterEl.style.right = isSmallScreen ? "70px" : "160px";
+      guitarCharacterEl.style.bottom = isSmallScreen ? "55px" : "100px";
+      guitarCharacterEl.style.zIndex = "10";
+      gameContainer.appendChild(guitarCharacterEl);
     }
+    
 
     addArmoredBus();
     addGuitarCharacter();
